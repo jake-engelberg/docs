@@ -14,6 +14,7 @@ Let's get started using the [conversation API]({{< ref conversation-overview.md 
 
 - Set up one of the available Dapr components (echo) that work with the conversation API.   
 - Add the conversation client to your application.
+- Run the connection using `dapr run`.
 
 ## Set up the conversation component
 
@@ -33,8 +34,31 @@ spec:
   version: v1
 ```
 
+### Use the OpenAI component
+
+To interface with a real LLM, use one of the other [supported conversation components]({{< ref "supported-conversation" >}}), including OpenAI, Hugging Face, Anthropic, DeepSeek, and more.
+
+For example, to swap out the `echo` mock component with an `OpenAI` component, replace the `conversation.yaml` file with the following. You'll need to copy your API key into the component file.
+
+```
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: openai
+spec:
+  type: conversation.openai
+  metadata:
+  - name: key
+    value: <REPLACE_WITH_YOUR_KEY>
+  - name: model
+    value: gpt-4-turbo
+  - name: cacheTTL
+    value: 10m
+```
+
 ## Connect the conversation client
 
+The following examples use an HTTP client to send a POST request to Dapr's sidecar HTTP endpoint. You can also use [the Dapr SDK client instead]({{< ref "#related-links" >}}).
 
 {{< tabs ".NET" "Go" "Rust" >}}
 
@@ -42,8 +66,30 @@ spec:
  <!-- .NET -->
 {{% codetab %}}
 
-```dotnet
-todo
+```csharp
+using Dapr.AI.Conversation;
+using Dapr.AI.Conversation.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDaprConversationClient();
+
+var app = builder.Build();
+
+var conversationClient = app.Services.GetRequiredService<DaprConversationClient>();
+var response = await conversationClient.ConverseAsync("conversation",
+    new List<DaprConversationInput>
+    {
+        new DaprConversationInput(
+            "Please write a witty haiku about the Dapr distributed programming framework at dapr.io",
+            DaprConversationRole.Generic)
+    });
+
+Console.WriteLine("Received the following from the LLM:");
+foreach (var resp in response.Outputs)
+{
+    Console.WriteLine($"\t{resp.Result}");
+}
 ```
 
 {{% /codetab %}}
@@ -68,7 +114,7 @@ func main() {
 	}
 
 	input := dapr.ConversationInput{
-		Message: "hello world",
+		Message: "Please write a witty haiku about the Dapr distributed programming framework at dapr.io",
 		// Role:     nil, // Optional
 		// ScrubPII: nil, // Optional
 	}
@@ -110,7 +156,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut client = DaprClient::connect(address).await?;
 
-    let input = ConversationInputBuilder::new("hello world").build();
+    let input = ConversationInputBuilder::new("Please write a witty haiku about the Dapr distributed programming framework at dapr.io").build();
 
     let conversation_component = "echo";
 
@@ -125,6 +171,84 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 ```
+
+{{% /codetab %}}
+
+{{< /tabs >}}
+
+## Run the conversation connection
+
+Start the connection using the `dapr run` command. For example, for this scenario, we're running `dapr run` on an application with the app ID `conversation` and pointing to our conversation YAML file in the `./config` directory. 
+
+{{< tabs ".NET" "Go" "Rust" >}}
+
+ <!-- .NET -->
+{{% codetab %}}
+
+```bash
+dapr run --app-id conversation --dapr-grpc-port 50001 --log-level debug --resources-path ./config -- dotnet run
+```
+
+{{% /codetab %}}
+
+ <!-- Go -->
+{{% codetab %}}
+
+```bash
+dapr run --app-id conversation --dapr-grpc-port 50001 --log-level debug --resources-path ./config -- go run ./main.go
+```
+
+**Expected output**
+
+```
+  - '== APP == conversation output: Please write a witty haiku about the Dapr distributed programming framework at dapr.io'
+```
+
+{{% /codetab %}}
+
+ <!-- Rust -->
+{{% codetab %}}
+
+```bash
+dapr run --app-id=conversation --resources-path ./config --dapr-grpc-port 3500 -- cargo run --example conversation
+```
+
+**Expected output**
+
+```
+  - 'conversation input: hello world'
+  - 'conversation output: hello world'
+```
+
+{{% /codetab %}}
+
+{{< /tabs >}}
+
+## Related links
+
+Try out the conversation API using the full examples provided in the supported SDK repos.
+
+
+{{< tabs ".NET" "Go" "Rust" >}}
+
+ <!-- .NET -->
+{{% codetab %}}
+
+[Dapr conversation example with the .NET SDK](https://github.com/dapr/dotnet-sdk/tree/master/examples/AI/ConversationalAI)
+
+{{% /codetab %}}
+
+ <!-- Go -->
+{{% codetab %}}
+
+[Dapr conversation example with the Go SDK](https://github.com/dapr/go-sdk/tree/main/examples/conversation)
+
+{{% /codetab %}}
+
+ <!-- Rust -->
+{{% codetab %}}
+
+[Dapr conversation example with the Rust SDK](https://github.com/dapr/rust-sdk/tree/main/examples/src/conversation)
 
 {{% /codetab %}}
 

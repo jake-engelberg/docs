@@ -95,11 +95,32 @@ For a new Dapr deployment, HA mode can be set with both:
 
 For an existing Dapr deployment, [you can enable HA mode in a few extra steps]({{< ref "#enabling-high-availability-in-an-existing-dapr-deployment" >}}).
 
+### Individual service HA Helm configuration
+
+You can configure HA mode via Helm across all services by setting the `global.ha.enabled` flag to `true`. By default, `--set global.ha.enabled=true` is fully respected and cannot be overridden, making it impossible to simultaneously have either the placement or scheduler service as a single instance. 
+
+> **Note:** HA for scheduler and placement services is not the default setting. 
+
+To scale scheduler and placement to three instances independently of the `global.ha.enabled` flag, set `global.ha.enabled` to `false` and `dapr_scheduler.ha` and `dapr_placement.ha` to `true`. For example:
+
+   ```bash
+   helm upgrade --install dapr dapr/dapr \
+    --version={{% dapr-latest-version short="true" %}} \
+    --namespace dapr-system \
+    --create-namespace \
+    --set global.ha.enabled=false \
+    --set dapr_scheduler.ha=true \
+    --set dapr_placement.ha=true \
+    --wait
+   ```
+
 ## Setting cluster critical priority class name for control plane services
 
 In some scenarios, nodes may have memory and/or cpu pressure and the Dapr control plane pods might get selected
 for eviction. To prevent this, you can set a critical priority class name for the Dapr control plane pods. This ensures that
 the Dapr control plane pods are not evicted unless all other pods with lower priority are evicted.
+
+It's particularly important to protect the Dapr control plane components from eviction, especially the Scheduler service. When Schedulers are rescheduled or restarted, it can be highly disruptive to inflight jobs, potentially causing them to fire duplicate times. To prevent such disruptions, you should ensure the Dapr control plane components have a higher priority class than your application workloads.
 
 Learn more about [Protecting Mission-Critical Pods](https://kubernetes.io/blog/2023/01/12/protect-mission-critical-pods-priorityclass/).
 
@@ -107,7 +128,7 @@ There are two built-in critical priority classes in Kubernetes:
 - `system-cluster-critical`
 - `system-node-critical` (highest priority)
 
-It's recommended to set the `priorityClassName` to `system-cluster-critical` for the Dapr control plane pods.  
+It's recommended to set the `priorityClassName` to `system-cluster-critical` for the Dapr control plane pods. If you have your own custom priority classes for your applications, ensure they have a lower priority value than the one assigned to the Dapr control plane to maintain system stability and prevent disruption of core Dapr services.
 
 For a new Dapr control plane deployment, the `system-cluster-critical` priority class mode can be set via the helm value `global.priorityClassName`.
 
@@ -135,7 +156,6 @@ spec:
         scopeName: PriorityClass
         values: [system-cluster-critical]
 ```
-
 
 ## Deploy Dapr with Helm
 
