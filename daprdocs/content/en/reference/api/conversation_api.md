@@ -30,9 +30,10 @@ POST /v1.0-alpha1/conversation/<llm-name>/converse
 
 | Field | Description |
 | --------- | ----------- |
-| `conversationContext` |  |
-| `inputs` | |
-| `parameters` | | 
+| `conversationContext` | The ID of an existing chat room (like in ChatGPT). |
+| `inputs` | Inputs for the conversation. Multiple inputs at one time are supported. |
+| `parameters` | Parameters for all custom fields. | 
+| `metadata` | Metadata passed to conversation components. Values include `model`, `key`, `endpoint`, and `cacheTTL` |
 
 
 ### Request content
@@ -41,6 +42,12 @@ POST /v1.0-alpha1/conversation/<llm-name>/converse
 REQUEST = {
   "inputs": ["what is Dapr", "Why use Dapr"],
   "parameters": {},
+  "metadata": {
+    "model": "model-ID-string-based-on-component-used",
+    "key": "key1",
+    "cacheTTL": "10m",
+    "endpoint": "http://localhost:3500"
+  }
 }
 ```
 
