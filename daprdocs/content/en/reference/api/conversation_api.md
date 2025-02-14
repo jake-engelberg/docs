@@ -32,9 +32,19 @@ POST /v1.0-alpha1/conversation/<llm-name>/converse
 | --------- | ----------- |
 | `conversationContext` | The ID of an existing chat room (like in ChatGPT). |
 | `inputs` | Inputs for the conversation. Multiple inputs at one time are supported. |
-| `parameters` | Parameters for all custom fields. | 
-| `metadata` | Metadata passed to conversation components. Values include `model`, `key`, `endpoint`, and `cacheTTL` |
+| `metadata` | [Metadata](#metadata) passed to conversation components. |
 
+#### Metadata
+
+Metadata can be sent in the request’s URL. It must be prefixed with `metadata.`, as shown in the table below.
+
+| Parameter | Description |
+| --------- | ----------- |
+| `metadata.key` | The API key for the component. `key` is not applicable to the [AWS Bedrock component]({{< ref "aws-bedrock.md#authenticating-aws" >}}). |
+| `metadata.model` | The Large Language Model you're using. Value depends on which conversation component you're using. `model` is not applicable to the [DeepSeek component]({{< ref deepseek.md >}}). |
+| `metadata.cacheTTL` | A time-to-live value for a prompt cache to expire. Uses Golang duration format. |
+
+The metadata parameters available depend on the conversation component you use. [See all the supported components for the conversation API.]({{< ref supported-conversation >}})
 
 ### Request content
 
