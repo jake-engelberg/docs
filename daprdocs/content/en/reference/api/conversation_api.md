@@ -61,7 +61,7 @@ REQUEST = {
   "inputs": ["what is Dapr", "Why use Dapr"],
   "metadata": {
     "model": "model-ID-string-based-on-component-used",
-    "key": "key1",
+    "key": "authKey",
     "cacheTTL": "10m",
   }
 }
