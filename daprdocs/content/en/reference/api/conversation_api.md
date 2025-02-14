@@ -59,7 +59,6 @@ The metadata parameters available depend on the conversation component you use. 
 ```json
 REQUEST = {
   "inputs": ["what is Dapr", "Why use Dapr"],
-  "parameters": {},
   "metadata": {
     "model": "model-ID-string-based-on-component-used",
     "key": "key1",
