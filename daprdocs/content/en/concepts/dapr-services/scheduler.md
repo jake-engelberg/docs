@@ -61,15 +61,16 @@ When the Scheduler service triggers a job and it has a client side error, the jo
 
 For non-client side errors, for example, when a job cannot be sent to an available Dapr sidecar at trigger time, it is placed in a staging queue within the Scheduler service. Jobs remain in this queue until a suitable sidecar instance becomes available, at which point they are automatically sent to the appropriate Dapr sidecar instance.
 
+
 ## Self-hosted mode
 
 The Scheduler service Docker container is started automatically as part of `dapr init`. It can also be run manually as a process if you are running in [slim-init mode]({{< ref self-hosted-no-docker.md >}}).
 
+The Scheduler can be run in both high availability (HA) and non-HA modes in self-hosted deployments. However, non-HA mode is not recommended for production use. If switching between non-HA and HA modes, the existing data directory must be removed, which will result in loss of jobs and actor reminders. Ensure you [run a back up]({{< ref "#back-up-and-restore-scheduler-data" >}}) before making this change to avoid losing data.
+
 ## Kubernetes mode
 
-The Scheduler service is deployed as part of `dapr init -k`, or via the Dapr Helm charts. When running in Kubernetes mode, the Scheduler service is configured to run with exactly 3 replicas to ensure data integrity. 
-
-You can run Scheduler in high availability (HA) mode. [Learn more about setting HA mode in your Kubernetes service.]({{< ref "kubernetes-production.md#individual-service-ha-helm-configuration" >}})
+The Scheduler service is deployed as part of `dapr init -k`, or via the Dapr Helm charts. Scheduler will always run in high availability (HA) mode in Kubernetes deployments. Scaling up or down is not possible without incurring data loss due to the nature of the embedded data store. [Learn more about setting HA mode in your Kubernetes service.]({{< ref "kubernetes-production.md#individual-service-ha-helm-configuration" >}})
 
 When a Kubernetes namespace is deleted, all the Job and Actor Reminders corresponding to that namespace are deleted.
 
@@ -114,6 +115,7 @@ Once you have access to the etcd ports, you can follow the [official etcd backup
 ## Disabling the Scheduler service
 
 If you are not using any features that require the Scheduler service (Jobs API, Actor Reminders, or Workflows), you can disable it by setting `global.scheduler.enabled=false`.
+
 
 For more information on running Dapr on Kubernetes, visit the [Kubernetes hosting page]({{< ref kubernetes >}}).
 
