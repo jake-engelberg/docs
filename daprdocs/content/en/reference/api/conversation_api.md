@@ -60,7 +60,7 @@ The metadata parameters available depend on the conversation component you use. 
 REQUEST = {
   "inputs": ["what is Dapr", "Why use Dapr"],
   "metadata": {
-    "model": "model-ID-string-based-on-component-used",
+    "model": "model-type-based-on-component-used",
     "key": "authKey",
     "cacheTTL": "10m",
   }
