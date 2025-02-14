@@ -61,7 +61,6 @@ When the Scheduler service triggers a job and it has a client side error, the jo
 
 For non-client side errors, for example, when a job cannot be sent to an available Dapr sidecar at trigger time, it is placed in a staging queue within the Scheduler service. Jobs remain in this queue until a suitable sidecar instance becomes available, at which point they are automatically sent to the appropriate Dapr sidecar instance.
 
-
 ## Self-hosted mode
 
 The Scheduler service Docker container is started automatically as part of `dapr init`. It can also be run manually as a process if you are running in [slim-init mode]({{< ref self-hosted-no-docker.md >}}).
@@ -115,7 +114,6 @@ Once you have access to the etcd ports, you can follow the [official etcd backup
 ## Disabling the Scheduler service
 
 If you are not using any features that require the Scheduler service (Jobs API, Actor Reminders, or Workflows), you can disable it by setting `global.scheduler.enabled=false`.
-
 
 For more information on running Dapr on Kubernetes, visit the [Kubernetes hosting page]({{< ref kubernetes >}}).
 
