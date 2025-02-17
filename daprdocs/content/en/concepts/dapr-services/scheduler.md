@@ -69,7 +69,7 @@ The Scheduler can be run in both high availability (HA) and non-HA modes in self
 
 ## Kubernetes mode
 
-The Scheduler service is deployed as part of `dapr init -k`, or via the Dapr Helm charts. Scheduler will always run in high availability (HA) mode in Kubernetes deployments. Scaling up or down is not possible without incurring data loss due to the nature of the embedded data store. [Learn more about setting HA mode in your Kubernetes service.]({{< ref "kubernetes-production.md#individual-service-ha-helm-configuration" >}})
+The Scheduler service is deployed as part of `dapr init -k`, or via the Dapr Helm charts. Scheduler will always run in high availability (HA) mode in Kubernetes deployments. Scaling the Scheduler service replicas up or down is not possible without incurring data loss due to the nature of the embedded data store. [Learn more about setting HA mode in your Kubernetes service.]({{< ref "kubernetes-production.md#individual-service-ha-helm-configuration" >}})
 
 When a Kubernetes namespace is deleted, all the Job and Actor Reminders corresponding to that namespace are deleted.
 
