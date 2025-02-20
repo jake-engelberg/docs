@@ -32,7 +32,7 @@ The above example uses secrets as plain strings. It is recommended to use a secr
 | Field              | Required | Details | Example |
 |--------------------|:--------:|---------|---------|
 | `key`   | Y | API key for DeepSeek. | `mykey` |
-| `maxToken` | N | The max amount of tokens for each request.  | `2048` |
+| `maxTokens` | N | The max amount of tokens for each request.  | `2048` |
 
 ## Related links
 
