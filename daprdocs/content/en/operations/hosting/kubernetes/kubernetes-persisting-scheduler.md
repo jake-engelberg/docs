@@ -41,7 +41,7 @@ This means the actual disk usage of Scheduler will be higher than the current ob
 ### Setting the Storage Size on Installation
 
 If you need to increase an **existing** Scheduler storage size, see the [Increase Scheduler Storage Size](#increase-existing-scheduler-storage-size) section below.
-To increase the storage size (in this example- `16Gi`) for a **fresh** Dapr instalation, you can use the following command:
+To increase the storage size (in this example- `16Gi`) for a **fresh** Dapr installation, you can use the following command:
 
 {{< tabs "Dapr CLI" "Helm" >}}
  <!-- Dapr CLI -->
